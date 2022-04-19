@@ -2,39 +2,43 @@ package com.example.room;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
 
-import com.example.room.database.AppDatabase;
-import com.example.room.database.PersonneDao;
 import com.example.room.database.PersonneEntity;
 import com.example.room.database.TestData;
+import com.example.room.recyclerview.PersonAdapter;
 import com.example.room.viewmodel.MainViewModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements PersonAdapter.PersonAdapterListener {
 
-    private ListView listView;
-    private ArrayAdapter<PersonneEntity> arrayAdapter;
+    private RecyclerView recyclerView;
+    private PersonAdapter adapter;
     private List<PersonneEntity> personList = new ArrayList<>();
     private MainViewModel mViewModel;
+    private Menu menu;
+    private Map<Integer, PersonneEntity> checkedIdPersonMap = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (listView == null) {
-            listView = findViewById(R.id.listView);
+        if (recyclerView == null) {
+            recyclerView = findViewById(R.id.recyclerView);
         }
 
         // create/get a view model singleton
@@ -47,18 +51,15 @@ public class MainActivity extends AppCompatActivity {
             personList.clear();
             personList.addAll(persons);
             // create a singleton adapter and affect to listView
-            if (arrayAdapter == null) {
-                arrayAdapter = new ArrayAdapter<PersonneEntity>(
-                        getApplicationContext(),
-                        android.R.layout.simple_list_item_1,
-                        personList
-                );
-                listView.setAdapter(arrayAdapter);
+            if (adapter == null) {
+                adapter = new PersonAdapter(personList, this);
+                recyclerView.setLayoutManager(new LinearLayoutManager(this));
+                recyclerView.setAdapter(adapter);
             }
             else {
                 Log.d("App", "changed notified");
                 // notify adapter a change
-                arrayAdapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
             }
 
         });
@@ -66,8 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+        MenuItem deleteMenuItem = menu.findItem(R.id.deleteAllData);
+        deleteMenuItem.setVisible(false);
         return true;
     }
 
@@ -76,6 +80,41 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onClickDeleteAllData(MenuItem item) {
-        mViewModel.deleteAllPersons();
+        List<PersonneEntity> personList = new ArrayList<>(checkedIdPersonMap.values());
+        mViewModel.deleteAllPersons(personList);
+        checkedIdPersonMap.clear();
+        refreshMenuItems();
+    }
+
+    @Override
+    public void onClick(View view, PersonneEntity person) {
+        if (view instanceof ImageView && view.getId() == R.id.iconImageView) {
+            // get tag value and update selected map
+            Boolean checked = (Boolean) ((ImageView) view).getTag();
+            PersonneEntity foundPerson = checkedIdPersonMap.get(person.getId());
+
+            if (foundPerson == null && checked) {
+                checkedIdPersonMap.put(person.getId(), person);
+            }
+
+            if (foundPerson != null && !checked) {
+                checkedIdPersonMap.remove(person.getId());
+            }
+
+            // update Menu item visible
+            refreshMenuItems();
+        }
+    }
+
+    private void refreshMenuItems() {
+        int checkedItemCounter = checkedIdPersonMap.size();
+        MenuItem deleteMenuItem = menu.findItem(R.id.deleteAllData);
+        MenuItem addAllData = menu.findItem(R.id.addAllData);
+        deleteMenuItem.setVisible(checkedItemCounter > 0 ? true : false);
+        addAllData.setVisible(checkedItemCounter > 0 ? false : true);
+
+        if (checkedItemCounter == 0) {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

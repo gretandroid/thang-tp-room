@@ -11,6 +11,7 @@ import com.example.room.database.PersonneEntity;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 // communicate avec la DB
 public class AppReposistory {
@@ -44,9 +45,16 @@ public class AppReposistory {
         });
     }
 
-    public void deleteAllPersons() {
+    public void deleteAll() {
         executor.execute(() -> {
             database.personneDao().deleteAll();
+        });
+    }
+
+    public void deleteAllPersons(List<PersonneEntity> persons) {
+        List<Integer> idList = persons.stream().map(PersonneEntity::getId).collect(Collectors.toList());
+        executor.execute(() -> {
+            database.personneDao().deleteAllPersons(idList);
         });
     }
 }

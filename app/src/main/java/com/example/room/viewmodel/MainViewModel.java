@@ -28,7 +28,7 @@ public class MainViewModel extends AndroidViewModel {
         reposistory.addAllPersons(persons);
     }
 
-    public void deleteAllPersons() {
-        reposistory.deleteAllPersons();
+    public void deleteAllPersons(List<PersonneEntity> persons) {
+        reposistory.deleteAllPersons(persons);
     }
 }

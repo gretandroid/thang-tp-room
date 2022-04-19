@@ -35,6 +35,9 @@ public interface PersonneDao {
     @Query("DELETE FROM person")
     int deleteAll();
 
+    @Query("DELETE FROM person where id in (:idList)")
+    int deleteAllPersons(List<Integer> idList);
+
     @Query("SELECT count(*) FROM person")
     int getCount();
 }

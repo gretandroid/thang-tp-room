@@ -8,6 +8,8 @@
         android:title="Add All Data" />
     <item
         android:id="@+id/deleteAllData"
+        android:icon="@android:drawable/ic_menu_delete"
         android:onClick="onClickDeleteAllData"
-        android:title="Delete All Data" />
+        android:title="Delete All Data"
+        app:showAsAction="ifRoom" />
 </menu>
