@@ -89,15 +89,14 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
     @Override
     public void onClick(View view, PersonneEntity person) {
         if (view instanceof ImageView && view.getId() == R.id.iconImageView) {
-            // get tag value and update selected map
-            Boolean checked = (Boolean) ((ImageView) view).getTag();
+
             PersonneEntity foundPerson = checkedIdPersonMap.get(person.getId());
 
-            if (foundPerson == null && checked) {
+            if (foundPerson == null) {
                 checkedIdPersonMap.put(person.getId(), person);
             }
 
-            if (foundPerson != null && !checked) {
+            if (foundPerson != null) {
                 checkedIdPersonMap.remove(person.getId());
             }
 
