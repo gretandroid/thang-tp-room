@@ -1,9 +1,6 @@
 package com.example.room;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import static com.example.room.R.id.iconImageView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -11,8 +8,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.room.database.PersonneEntity;
 import com.example.room.database.TestData;
@@ -55,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
                 adapter = new PersonAdapter(personList, this);
                 recyclerView.setLayoutManager(new LinearLayoutManager(this));
                 recyclerView.setAdapter(adapter);
-            }
-            else {
+            } else {
                 Log.d("App", "changed notified");
                 // notify adapter a change
                 adapter.notifyDataSetChanged();
@@ -88,18 +88,10 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
 
     @Override
     public void onClick(View view, PersonneEntity person) {
-        if (view instanceof ImageView && view.getId() == R.id.iconImageView) {
-
+        if (view instanceof ImageView && view.getId() == iconImageView) {
             PersonneEntity foundPerson = checkedIdPersonMap.get(person.getId());
-
-            if (foundPerson == null) {
-                checkedIdPersonMap.put(person.getId(), person);
-            }
-
-            if (foundPerson != null) {
-                checkedIdPersonMap.remove(person.getId());
-            }
-
+            if (foundPerson == null) checkedIdPersonMap.put(person.getId(), person);
+            if (foundPerson != null) checkedIdPersonMap.remove(person.getId());
             // update Menu item visible
             refreshMenuItems();
         }
@@ -111,9 +103,6 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
         MenuItem addAllData = menu.findItem(R.id.addAllData);
         deleteMenuItem.setVisible(checkedItemCounter > 0 ? true : false);
         addAllData.setVisible(checkedItemCounter > 0 ? false : true);
-
-        if (checkedItemCounter == 0) {
-            adapter.notifyDataSetChanged();
-        }
+        if (checkedItemCounter == 0) adapter.notifyDataSetChanged();
     }
 }

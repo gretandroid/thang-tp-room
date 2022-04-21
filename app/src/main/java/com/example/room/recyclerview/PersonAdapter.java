@@ -20,14 +20,16 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
     private List<PersonneEntity> personList;
     private PersonAdapterListener adapterListener;
 
-    public PersonAdapter(List<PersonneEntity> personList, PersonAdapterListener adapterListener) {
+    public PersonAdapter(List<PersonneEntity> personList,
+                         PersonAdapterListener adapterListener) {
         this.personList = personList;
         this.adapterListener = adapterListener;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent,
+                                         int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
         View view = layoutInflater.inflate(R.layout.row, parent, false);
         return new ViewHolder(view);
