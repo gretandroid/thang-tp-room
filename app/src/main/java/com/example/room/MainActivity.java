@@ -67,11 +67,16 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu, menu);
+
         MenuItem deleteMenuItem = menu.findItem(R.id.deleteAllData);
-        deleteMenuItem.setVisible(false);
+        MenuItem addAllData = menu.findItem(R.id.addAllData);
+
+        // init visibility
+        int checkedItemCounter = checkedIdPersonMap.size();
+        deleteMenuItem.setVisible(checkedItemCounter > 0 ? true : false);
+        addAllData.setVisible(checkedItemCounter > 0 ? false : true);
         return true;
     }
 
@@ -102,17 +107,16 @@ public class MainActivity extends AppCompatActivity implements PersonAdapter.Per
 
             // update Menu item visible
             refreshMenuItems();
+            refreshRecyclerView();
         }
     }
 
     private void refreshMenuItems() {
-        int checkedItemCounter = checkedIdPersonMap.size();
-        MenuItem deleteMenuItem = menu.findItem(R.id.deleteAllData);
-        MenuItem addAllData = menu.findItem(R.id.addAllData);
-        deleteMenuItem.setVisible(checkedItemCounter > 0 ? true : false);
-        addAllData.setVisible(checkedItemCounter > 0 ? false : true);
+        invalidateOptionsMenu();
+    }
 
-        if (checkedItemCounter == 0) {
+    private void refreshRecyclerView() {
+        if (checkedIdPersonMap.isEmpty()) {
             adapter.notifyDataSetChanged();
         }
     }
