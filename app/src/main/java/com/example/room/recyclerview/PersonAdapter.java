@@ -42,7 +42,7 @@ public class PersonAdapter extends RecyclerView.Adapter<PersonAdapter.ViewHolder
         holder.idTextView.setText(String.valueOf(person.getId()));
         holder.nomTextView.setText(person.getNom());
         holder.dateTextView.setText(TestData.formatter.format(person.getDate()));
-
+        holder.iconImageView.setTag(Boolean.FALSE);
         holder.iconImageView.setOnClickListener(view -> {
             // change to check image
             if (holder.iconImageView.getTag() == Boolean.TRUE) {
